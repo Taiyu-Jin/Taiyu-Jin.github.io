@@ -35,7 +35,7 @@
     <script class="keep-theme-configurations">
     const KEEP = window.KEEP || {}
     KEEP.hexo_config = {"hostname":"taiyu-jin.github.io","root":"/","language":"zh-CN","path":"search.json"}
-    KEEP.theme_config = {"base_info":{"primary_color":"#0be881","title":"Taiyu的博客","author":"Taiyu-Jin","avatar":"/img/OIP.jpeg","logo":"/img/OIP.jpeg","favicon":"/img/favicon.png"},"menu":{"home":"/                        || fa-solid fa-home","archives":"/archives            || fa-solid fa-box-archive","about":"/about               || fa-solid fa-user-graduate"},"first_screen":{"enable":true,"background_img":"/img/bg/about_page_pic.jpg","background_img_dark":"/images/bg.svg","description":"好好学习天天向上","hitokoto":false},"social_contact":{"enable":true,"links":{"github":"https://github.com/Taiyu-Jin","weixin":"img | /img/wechat.png","qq":null,"weibo":null,"zhihu":null,"twitter":null,"x":null,"facebook":null,"email":null}},"scroll":{"progress_bar":false,"percent":true,"hide_header":false},"home":{"announcement":"大家快来看看吧","category":true,"tag":true,"post_datetime":"created"},"post":{"author_badge":{"enable":true,"level_badge":true,"custom_badge":["One","Two","Three"]},"word_count":{"wordcount":true,"min2read":false},"datetime_format":"YYYY-MM-DD HH:mm:ss","copyright_info":false,"share":true,"reward":{"enable":false,"img_link":null,"text":null,"icon":null}},"code_block":{"tools":{"enable":false,"style":"default"},"highlight_theme":"default"},"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true,"layout":"right"},"website_count":{"busuanzi_count":{"enable":false,"site_uv":false,"site_pv":false,"page_pv":false}},"local_search":{"enable":true,"preload":true},"comment":{"enable":false,"use":"valine","valine":{"appid":null,"appkey":null,"server_urls":null,"placeholder":null},"gitalk":{"github_id":null,"github_admins":null,"repository":null,"client_id":null,"client_secret":null,"proxy":null},"twikoo":{"env_id":null,"region":null,"version":"1.6.39"},"waline":{"server_url":null,"reaction":false,"version":"3.3.2"},"giscus":{"repo":null,"repo_id":null,"category":"Announcements","category_id":null,"reactions_enabled":false},"artalk":{"server":null},"disqus":{"shortname":null}},"rss":{"enable":false},"lazyload":{"enable":false},"cdn":{"enable":false,"provider":"cdnjs"},"pjax":{"enable":false},"footer":{"since":2025,"word_count":false,"site_deploy":{"enable":true,"provider":"github","url":null},"record":{"enable":false,"list":[{"code":null,"link":null}]}},"inject":{"enable":false,"css":[null],"js":[null]},"root":"","source_data":{},"version":"4.2.5"}
+    KEEP.theme_config = {"base_info":{"primary_color":"#0be881","title":"Taiyu的博客","author":"Taiyu-Jin","avatar":"/img/OIP.jpeg","logo":"/img/OIP.jpeg","favicon":"/img/favicon.png"},"menu":{"home":"/                        || fa-solid fa-home","archives":"/archives            || fa-solid fa-box-archive","tags":"/tags                    || fa-solid fa-tags","categories":"/categories        || fa-solid fa-layer-group","about":"/about               || fa-solid fa-user-graduate"},"first_screen":{"enable":true,"background_img":"/img/mountain.jpg","background_img_dark":"/images/bg.svg","description":"读万卷书行万里路","hitokoto":false},"social_contact":{"enable":true,"links":{"github":"https://github.com/Taiyu-Jin","weixin":"img | /img/wechat.png","qq":"img | /img/qq.jpg","weibo":null,"zhihu":null,"twitter":null,"x":null,"facebook":null,"email":"jty145626@163.com"}},"scroll":{"progress_bar":false,"percent":true,"hide_header":false},"home":{"announcement":"大家快来看看吧","category":true,"tag":true,"post_datetime":"created"},"post":{"author_badge":{"enable":true,"level_badge":false,"custom_badge":["One","Two","Three"]},"word_count":{"wordcount":true,"min2read":false},"datetime_format":"YYYY-MM-DD HH:mm:ss","copyright_info":false,"share":true,"reward":{"enable":false,"img_link":null,"text":null,"icon":null}},"code_block":{"tools":{"enable":false,"style":"default"},"highlight_theme":"default"},"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true,"layout":"right"},"website_count":{"busuanzi_count":{"enable":false,"site_uv":false,"site_pv":false,"page_pv":false}},"local_search":{"enable":true,"preload":true},"comment":{"enable":false,"use":"valine","valine":{"appid":null,"appkey":null,"server_urls":null,"placeholder":null},"gitalk":{"github_id":null,"github_admins":null,"repository":null,"client_id":null,"client_secret":null,"proxy":null},"twikoo":{"env_id":null,"region":null,"version":"1.6.39"},"waline":{"server_url":null,"reaction":false,"version":"3.3.2"},"giscus":{"repo":null,"repo_id":null,"category":"Announcements","category_id":null,"reactions_enabled":false},"artalk":{"server":null},"disqus":{"shortname":null}},"rss":{"enable":false},"lazyload":{"enable":false},"cdn":{"enable":false,"provider":"cdnjs"},"pjax":{"enable":false},"footer":{"since":2025,"word_count":false,"site_deploy":{"enable":true,"provider":"github","url":null},"record":{"enable":false,"list":[{"code":null,"link":null}]}},"inject":{"enable":false,"css":[null],"js":[null]},"root":"","source_data":{},"version":"4.2.5"}
     KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"}
     KEEP.language_code_block = {"copy":"复制代码","copied":"已复制","fold":"折叠代码块","folded":"已折叠"}
     KEEP.language_copy_copyright = {"copy":"复制版权信息","copied":"已复制","title":"原文标题","author":"原文作者","link":"原文链接"}
@@ -97,6 +97,30 @@
                                     <i class="menu-text-color menu-icon fa-solid fa-box-archive"></i>
                                 
                                 归档
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/tags">
+                                
+                                    <i class="menu-text-color menu-icon fa-solid fa-tags"></i>
+                                
+                                标签
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/categories">
+                                
+                                    <i class="menu-text-color menu-icon fa-solid fa-layer-group"></i>
+                                
+                                分类
                                 
                             </a>
                             
@@ -170,6 +194,38 @@
                 
                 <li class="drawer-menu-item border-box not-sub-menu">
                     <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/tags">
+                            
+                                <span class="menu-icon-wrap border-box flex-center">
+                                    <i class="drawer-menu-text-color menu-icon fa-solid fa-tags"></i>
+                                </span>
+                            
+                            标签
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/categories">
+                            
+                                <span class="menu-icon-wrap border-box flex-center">
+                                    <i class="drawer-menu-text-color menu-icon fa-solid fa-layer-group"></i>
+                                </span>
+                            
+                            分类
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
                         <a class="drawer-menu-text-color left-side flex-start border-box" href="/about">
                             
                                 <span class="menu-icon-wrap border-box flex-center">
@@ -222,7 +278,7 @@
                             <div class="author border-box">
                                 <span class="name">Taiyu-Jin</span>
                                 
-                                    <span class="author-badge">Lv1</span>
+                                    <span class="author-badge">One</span>
                                 
                             </div>
                             <div class="meta-info border-box">
@@ -241,13 +297,31 @@
             
                 <span class="meta-info-item post-update-date">
                     <i class="icon fa-solid fa-file-pen"></i>&nbsp;
-                    <span class="datetime" data-updated="Mon Mar 24 2025 20:41:47 GMT+0800">2025-03-24 20:41:47</span>
+                    <span class="datetime" data-updated="Tue Mar 25 2025 19:05:35 GMT+0800">2025-03-25 19:05:35</span>
                 </span>
             
         
 
         
+            <span class="meta-info-item post-category border-box"><i class="icon fas fa-folder"></i>&nbsp;
+                <ul class="post-category-ul">
+                    
+                            <li class="category-item"><a href="/categories/%E7%94%9F%E6%B4%BB/">生活</a></li>
+                        
+                    
+                </ul>
+            </span>
+        
 
+        
+            <span class="post-tag meta-info-item border-box">
+                <ul class="post-tag-ul">
+                    
+                            <li class="tag-item"><span class="tag-separator"><i class="icon fas fa-hashtag"></i></span><a href="/tags/thought/">thought</a></li>
+                        
+                    
+                </ul>
+            </span>
         
 
         
@@ -269,6 +343,23 @@
 
                     
                          <h1 id="Why-Blog"><a href="#Why-Blog" class="headerlink" title="Why Blog"></a>Why Blog</h1><p>为什么要开通个人博客呢，一个是生活的记录，另一个是知识库的整理</p>
+<h1 id="今日跑步记录"><a href="#今日跑步记录" class="headerlink" title="今日跑步记录"></a>今日跑步记录</h1><p><strong>日期</strong>：2025年3月25日</p>
+<p><strong>跑步时间</strong>：30分钟</p>
+<p><strong>跑步距离</strong>：5公里</p>
+<p><strong>平均配速</strong>：6:00&#x2F;km</p>
+<p><strong>跑步路线</strong>：</p>
+<ul>
+<li>起点：公园入口</li>
+<li>终点：湖边广场</li>
+<li>路线：环形跑道，途中经过绿地和小桥</li>
+</ul>
+<p><strong>天气</strong>：晴，温度 18°C</p>
+<p><strong>感受</strong>：<br>今天的跑步很顺利，气温适宜，跑步过程感觉身体比较轻松。最后几公里有些许疲惫，但还是坚持了下来。今天的配速比上次稍快了一些，感觉状态有了提升。</p>
+<p><strong>下次目标</strong>：</p>
+<ul>
+<li>增加跑步时间到35分钟</li>
+<li>逐渐提高配速，争取达到5:45&#x2F;km</li>
+</ul>
 
                     
                 </div>
@@ -277,6 +368,14 @@
 
                 <div class="post-bottom-tags-and-share border-box">
                     <div>
+                        
+                            <ul class="post-tags-box border-box">
+                                
+                                    <li class="tag-item border-box">
+                                        <i class="icon fas fa-hashtag"></i>&nbsp;<a href="/tags/thought/">thought</a>
+                                    </li>
+                                
+                            </ul>
                         
                     </div>
                     <div>
@@ -310,27 +409,6 @@
                 
 
                 
-                    <div class="post-nav border-box">
-                        
-                        
-                            <div class="next-post">
-                                <a class="next"
-                                   rel="next"
-                                   href="/2025/03/24/hello-world/"
-                                   title="Hello World"
-                                >
-                                    <span class="title flex-center">
-                                        <span class="post-nav-title-item text-ellipsis">Hello World</span>
-                                        <span class="post-nav-item">下一篇</span>
-                                    </span>
-                                    <span class="right arrow-icon flex-center">
-                                        <i class="fas fa-chevron-right"></i>
-                                    </span>
-                                </a>
-                            </div>
-                        
-                    </div>
-                
 
                 
                     
@@ -348,7 +426,7 @@
             <div class="pc-post-toc right-toc">
                 <div class="post-toc-wrap border-box">
     <div class="post-toc border-box">
-        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Why-Blog"><span class="nav-text">Why Blog</span></a></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Why-Blog"><span class="nav-text">Why Blog</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%8A%E6%97%A5%E8%B7%91%E6%AD%A5%E8%AE%B0%E5%BD%95"><span class="nav-text">今日跑步记录</span></a></li></ol>
     </div>
 </div>
 
@@ -515,7 +593,7 @@
             <div class="tablet-post-toc">
                 <div class="post-toc-wrap border-box">
     <div class="post-toc border-box">
-        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Why-Blog"><span class="nav-text">Why Blog</span></a></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Why-Blog"><span class="nav-text">Why Blog</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%8A%E6%97%A5%E8%B7%91%E6%AD%A5%E8%AE%B0%E5%BD%95"><span class="nav-text">今日跑步记录</span></a></li></ol>
     </div>
 </div>
 
