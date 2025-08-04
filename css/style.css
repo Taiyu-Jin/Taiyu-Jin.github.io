@@ -3429,7 +3429,7 @@ figure.highlight .shrink-line:hover::before {
   width: 100%;
   height: 100vh;
   overflow: hidden;
-  background-image: url("/img/bg/about_page_pic.jpg");
+  background-image: url("https://www.helloimg.com/i/2025/08/04/689063602ee59.png");
   background-position-x: center;
   background-position-y: center;
   background-size: cover;
@@ -3437,7 +3437,7 @@ figure.highlight .shrink-line:hover::before {
   background-repeat-y: no-repeat;
 }
 .dark-mode .first-screen-container {
-  background-image: url("/images/bg.svg");
+  background-image: url("https://www.helloimg.com/i/2025/08/04/689063c0c1c48.jpg");
 }
 .first-screen-container .first-screen-content {
   display: flex;
