@@ -2,17 +2,18 @@
  * travel-map.js — 首页"足迹 · 3D 地球"
  *
  * 使用 ECharts GL 渲染可旋转的 3D 球体地球（参考高德地图风格）：
- *   - 黑色太空背景
- *   - 地球纹理（默认带光照）
- *   - 国家轮廓（暗色描边）
- *   - 城市光柱（去过的城市向上立光柱，柱顶白色脉冲圆点）
- *   - 鼠标拖动旋转 / 滚轮缩放
- *   - 悬停城市：弹出照片卡
+ *   - 太空深蓝背景 + 星空（由 CSS 提供）
+ *   - 地球纹理（白天贴图 + 暗面夜景灯光）
+ *   - 城市光点（去过的城市）
+ *   - 城市光柱（bar3D，向上立光柱）
+ *   - 悬停光柱 → 光柱高亮 + 城市名标签
+ *   - 点击光点 → 弹出照片卡（DOM 浮层，含照片/日期/笔记）
+ *   - 鼠标拖动旋转 / 滚轮缩放 / 鼠标视差
  *
  * 数据：
  *   - /data/travel-data.json —— 去过的地方
  *
- * 由 custom-effects.js 在首页加载 ECharts、ECharts GL、世界地图后，按需加载本脚本。
+ * 由 custom-effects.js 在首页加载 ECharts、ECharts GL 后，按需加载本脚本。
  */
 (function () {
   'use strict';
@@ -25,6 +26,10 @@
   // 夜景灯光贴图：4096x2048，等距柱状，黑色海洋 + 暖黄色城市灯光
   const NIGHT_TEX = '/img/earth/earth-night.jpg';
 
+  // 光柱高度（相对地球半径的可视比例，值越大柱越高）
+  const BAR_HEIGHT = 9;
+  const BAR_MIN_HEIGHT = 1.5;
+
   fetch('/data/travel-data.json')
     .then((r) => r.json())
     .then((travel) => {
@@ -35,7 +40,7 @@
         devicePixelRatio: Math.min(window.devicePixelRatio || 1, 2)
       });
 
-      // 城市 → 3D 球面坐标 + 光点
+      // 城市 → 光点数据 [lon, lat]
       const cityScatter = cities
         .filter((c) => Array.isArray(c.coord))
         .map((c) => ({
@@ -44,32 +49,55 @@
           city: c
         }));
 
+      // 城市 → 光柱数据 [lon, lat, height]
+      const cityBars = cities
+        .filter((c) => Array.isArray(c.coord))
+        .map((c) => ({
+          name: c.name,
+          value: [c.coord[0], c.coord[1], BAR_HEIGHT],
+          city: c
+        }));
+
+      // ---------- 照片卡（点击光点弹出） ----------
+      const photoCard = document.createElement('div');
+      photoCard.className = 'city-photo-card';
+      photoCard.innerHTML = `
+        <button class="city-photo-close" aria-label="关闭" type="button">
+          <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>
+        </button>
+        <div class="city-photo-body"></div>
+      `;
+      // 挂到 hero-earth 容器（绝对定位层），避免被 canvas 事件遮挡
+      const heroRoot = dom.closest('.hero-earth') || dom.parentNode;
+      heroRoot.appendChild(photoCard);
+
+      const photoBody = photoCard.querySelector('.city-photo-body');
+      const closeBtn = photoCard.querySelector('.city-photo-close');
+
+      const renderPhotoCard = (city) => {
+        if (!city) return;
+        const hasPhoto = city.photo;
+        photoBody.innerHTML =
+          '<div class="city-photo-title">' + (city.name || '') + '</div>' +
+          (city.date ? '<div class="city-photo-date">' + city.date + '</div>' : '') +
+          (hasPhoto
+            ? '<img class="city-photo-img" src="' + city.photo + '" alt="' + (city.name || '') + '" onerror="this.parentNode.removeChild(this)" />'
+            : '<div class="city-photo-empty">还没有照片，先保留这段回忆 🌏</div>') +
+          (city.note ? '<div class="city-photo-note">' + city.note + '</div>' : '');
+        photoCard.classList.add('show');
+      };
+
+      const closePhotoCard = () => photoCard.classList.remove('show');
+      closeBtn.addEventListener('click', closePhotoCard);
+      // 点击卡片外部关闭
+      document.addEventListener('click', (e) => {
+        if (photoCard.classList.contains('show') && !photoCard.contains(e.target)) {
+          closePhotoCard();
+        }
+      });
+
       chart.setOption({
         backgroundColor: 'transparent',
-        tooltip: {
-          trigger: 'item',
-          backgroundColor: 'rgba(15, 23, 42, 0.92)',
-          borderColor: 'rgba(125, 211, 252, 0.4)',
-          borderWidth: 1,
-          padding: [10, 12],
-          textStyle: { color: '#f0f6ff', fontSize: 13 },
-          extraCssText: 'backdrop-filter: blur(10px); border-radius: 12px; box-shadow: 0 12px 36px rgba(0,0,0,0.45); max-width: 240px;',
-          formatter: (p) => {
-            if (p.seriesType === 'scatter3D') {
-              const city = p.data.city || {};
-              const photo = city.photo
-                ? '<img src="' + city.photo + '" alt="' + (city.name || '') + '" style="display:block;width:200px;border-radius:10px;margin:8px 0 6px;pointer-events:none;" onerror="this.style.display=\'none\'" />'
-                : '';
-              return (
-                '<div style="font-size:14px;font-weight:600;letter-spacing:.02em;">' + (city.name || p.name) + '</div>' +
-                (city.date ? '<div style="opacity:.55;margin-top:2px;font-size:12px;">' + city.date + '</div>' : '') +
-                photo +
-                (city.note ? '<div style="opacity:.85;line-height:1.55;margin-top:2px;">' + city.note + '</div>' : '')
-              );
-            }
-            return '';
-          }
-        },
         globe: {
           baseTexture: EARTH_TEX,
           environment: NIGHT_TEX, // 暗面叠加夜景灯光（高德地图同款）
@@ -102,12 +130,52 @@
           }
         },
         series: [
-          // 城市点（光点）
+          // 光柱（bar3D）：悬停高亮 + 城市名标签
+          {
+            type: 'bar3D',
+            coordinateSystem: 'globe',
+            data: cityBars,
+            barSize: 1.6,
+            minHeight: BAR_MIN_HEIGHT,
+            maxHeight: BAR_HEIGHT,
+            bevelSize: 0.4,
+            bevelSmoothness: 4,
+            shading: 'lambert',
+            silent: true, // 光柱不响应鼠标事件（避免与光点抢 hover/click）
+            itemStyle: {
+              color: 'rgba(125, 211, 252, 0.85)',
+              opacity: 0.9
+            },
+            emphasis: {
+              itemStyle: {
+                color: '#ffffff',
+                opacity: 1,
+                shadowBlur: 16,
+                shadowColor: '#7dd3fc'
+              },
+              label: {
+                show: true,
+                distance: 4,
+                formatter: '{b}',
+                textStyle: {
+                  color: '#ffffff',
+                  fontSize: 14,
+                  fontWeight: 600,
+                  backgroundColor: 'rgba(10, 22, 48, 0.85)',
+                  padding: [4, 10],
+                  borderRadius: 8,
+                  borderColor: 'rgba(125, 211, 252, 0.5)',
+                  borderWidth: 1
+                }
+              }
+            }
+          },
+          // 城市光点（scatter3D）：点击弹出照片卡
           {
             type: 'scatter3D',
             coordinateSystem: 'globe',
             data: cityScatter,
-            symbolSize: 10,
+            symbolSize: 12,
             itemStyle: {
               color: '#ffffff',
               opacity: 1,
@@ -115,9 +183,36 @@
               borderWidth: 1.5,
               shadowColor: '#7dd3fc',
               shadowBlur: 12
+            },
+            emphasis: {
+              itemStyle: {
+                color: '#ffffff',
+                shadowColor: '#ffffff',
+                shadowBlur: 20
+              },
+              label: {
+                show: true,
+                distance: 4,
+                formatter: '{b}',
+                textStyle: {
+                  color: '#ffffff',
+                  fontSize: 13,
+                  fontWeight: 600,
+                  backgroundColor: 'rgba(10, 22, 48, 0.85)',
+                  padding: [3, 9],
+                  borderRadius: 8
+                }
+              }
             }
           }
         ]
+      });
+
+      // 点击城市光点 → 弹出照片卡
+      chart.on('click', (params) => {
+        if (params.seriesType === 'scatter3D' && params.data && params.data.city) {
+          renderPhotoCard(params.data.city);
+        }
       });
 
       window.addEventListener('resize', () => chart.resize());

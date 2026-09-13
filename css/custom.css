@@ -817,3 +817,87 @@ code {
   .hero-earth-stats { gap: 28px; }
   .hero-earth-hint-controls { display: none; }
 }
+
+/* -------------------------------------------------------------------------------------
+ * 城市照片卡：点击地球光点后浮层弹出
+ * ------------------------------------------------------------------------------------ */
+.city-photo-card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 10;
+  transform: translate(-50%, -50%) scale(0.92);
+  width: 300px;
+  max-width: calc(100vw - 48px);
+  background: rgba(15, 23, 42, 0.92);
+  border: 1px solid rgba(125, 211, 252, 0.4);
+  border-radius: 18px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(125, 211, 252, 0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  overflow: hidden;
+}
+.city-photo-card.show {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+  pointer-events: auto;
+}
+.city-photo-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: rgba(0, 0, 0, 0.35);
+  border: none;
+  border-radius: 50%;
+  color: #ffffff;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: opacity 0.2s ease, background 0.2s ease;
+}
+.city-photo-close:hover { opacity: 1; background: rgba(0, 0, 0, 0.55); }
+.city-photo-body { padding: 20px 20px 22px; }
+.city-photo-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: 0.02em;
+}
+.city-photo-date {
+  margin-top: 4px;
+  font-size: 12px;
+  color: rgba(220, 232, 255, 0.55);
+  letter-spacing: 0.04em;
+}
+.city-photo-img {
+  display: block;
+  width: 100%;
+  border-radius: 12px;
+  margin-top: 14px;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+.city-photo-empty {
+  margin-top: 14px;
+  padding: 28px 12px;
+  text-align: center;
+  font-size: 13px;
+  color: rgba(220, 232, 255, 0.6);
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 12px;
+}
+.city-photo-note {
+  margin-top: 14px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: rgba(226, 238, 255, 0.85);
+}
