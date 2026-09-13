@@ -342,12 +342,54 @@
   };
 
   // ========================================
+  // 3. 首页"足迹 · 中国"地图（懒加载，仅首页）
+  // ========================================
+  const loadScript = (src, id) =>
+    new Promise((resolve, reject) => {
+      const old = document.getElementById(id);
+      if (old) old.remove();
+      const s = document.createElement('script');
+      s.src = src;
+      s.id = id;
+      s.onload = resolve;
+      s.onerror = () => reject(new Error('加载失败: ' + src));
+      document.head.appendChild(s);
+    });
+
+  const initTravelMap = () => {
+    const mainContent = document.querySelector('.page-main-content.is-home .main-content');
+    if (!mainContent) return;
+
+    // PJAX 回到首页时重建
+    const old = document.getElementById('travel-map-section');
+    if (old) old.remove();
+
+    const section = document.createElement('section');
+    section.id = 'travel-map-section';
+    section.className = 'travel-map-section';
+    section.innerHTML = `
+      <div class="travel-map-head">
+        <h2 class="travel-map-title">足迹 · 中国</h2>
+        <p class="travel-map-sub">地图上的每一束光，都是一段旅程</p>
+      </div>
+      <div id="travel-map" class="travel-map-canvas" aria-label="我去过的中国城市地图"></div>
+      <div class="travel-map-hint">悬停在光点上，看看当时的照片</div>
+    `;
+    mainContent.insertBefore(section, mainContent.firstChild);
+
+    loadScript('/js/vendor/echarts.min.js', 'echarts-vendor')
+      .then(() => loadScript('/js/travel-map.js', 'travel-map-script'))
+      .catch(() => section.remove());
+  };
+
+  // ========================================
   // 4. 启动
   // ========================================
   const start = () => {
     injectPlayerStyle();
     initSmoothScroll();
     initMusicPlayer();
+    initTravelMap();
   };
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);

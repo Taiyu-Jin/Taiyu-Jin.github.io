@@ -538,3 +538,96 @@ code {
     padding-right: 12px;
   }
 }
+
+/* -------------------------------------------------------------------------------------
+ * 9. 首页"足迹 · 中国"科技感地图
+ * ------------------------------------------------------------------------------------ */
+.travel-map-section {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: var(--component-gap);
+  padding: 30px 22px 14px;
+  border-radius: var(--box-border-radius);
+  background: radial-gradient(1200px 520px at 18% -10%, #17305e 0%, #0a1330 52%, #070b1c 100%);
+  color: #eaf2ff;
+}
+
+/* 网格 + 辉光装饰层 */
+.travel-map-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(0, 229, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 229, 255, 0.05) 1px, transparent 1px);
+  background-size: 44px 44px;
+  pointer-events: none;
+}
+
+.travel-map-section::after {
+  content: '';
+  position: absolute;
+  top: -120px;
+  right: -80px;
+  width: 380px;
+  height: 380px;
+  background: radial-gradient(circle, rgba(0, 229, 255, 0.14) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+.travel-map-head {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  margin-bottom: 6px;
+}
+
+.travel-map-title {
+  margin: 0;
+  font-size: 1.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  background: linear-gradient(90deg, #9be8ff 0%, #00e5ff 55%, #4d8bff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.travel-map-sub {
+  margin: 8px 0 0;
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  color: rgba(234, 242, 255, 0.55);
+}
+
+.travel-map-canvas {
+  position: relative;
+  z-index: 1;
+  height: min(64vh, 600px);
+  min-height: 420px;
+}
+
+.travel-map-hint {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 2px 0 12px;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: rgba(0, 229, 255, 0.55);
+}
+
+@media (max-width: 640px) {
+  .travel-map-section {
+    padding: 22px 10px 8px;
+  }
+
+  .travel-map-canvas {
+    height: 56vh;
+    min-height: 340px;
+  }
+
+  .travel-map-title {
+    font-size: 1.3rem;
+  }
+}
