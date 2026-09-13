@@ -710,9 +710,14 @@ code {
 .blog-content {
   position: relative;
   opacity: 0;
-  transform: translateY(60px);
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transform: translateY(40px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
   will-change: transform, opacity;
+}
+
+.blog-content.is-visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 @media (max-width: 760px) {

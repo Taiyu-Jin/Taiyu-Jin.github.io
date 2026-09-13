@@ -394,7 +394,27 @@
     mainContent.appendChild(hero);
     mainContent.appendChild(wrapper);
 
-    // 向下滚动引导：点击滚动到博客段落（已移除，改由自然滚动）
+    // 滚动到博客段落时淡入（IntersectionObserver 驱动）
+    const revealBlog = () => {
+      wrapper.classList.add('is-visible');
+    };
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              revealBlog();
+              io.disconnect();
+            }
+          });
+        },
+        { threshold: 0.05 }
+      );
+      io.observe(wrapper);
+    } else {
+      // 兜底：直接可见
+      wrapper.classList.add('is-visible');
+    }
 
     // 加载链：ECharts → echarts-gl → travel-map
     loadScript('/js/vendor/echarts.min.js', 'echarts-vendor')
