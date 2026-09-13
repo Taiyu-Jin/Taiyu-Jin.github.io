@@ -130,7 +130,7 @@
           }
         },
         series: [
-          // 光柱（bar3D）：悬停高亮 + 城市名标签
+          // 光柱（bar3D）：默认淡显示；悬停时高亮 + 显示城市名标签
           {
             type: 'bar3D',
             coordinateSystem: 'globe',
@@ -143,14 +143,14 @@
             shading: 'lambert',
             silent: true, // 光柱不响应鼠标事件（避免与光点抢 hover/click）
             itemStyle: {
-              color: 'rgba(125, 211, 252, 0.85)',
-              opacity: 0.9
+              color: 'rgba(125, 211, 252, 0.35)', // 默认淡光柱
+              opacity: 0.35
             },
             emphasis: {
               itemStyle: {
                 color: '#ffffff',
                 opacity: 1,
-                shadowBlur: 16,
+                shadowBlur: 18,
                 shadowColor: '#7dd3fc'
               },
               label: {
@@ -161,7 +161,7 @@
                   color: '#ffffff',
                   fontSize: 14,
                   fontWeight: 600,
-                  backgroundColor: 'rgba(10, 22, 48, 0.85)',
+                  backgroundColor: 'rgba(10, 22, 48, 0.92)',
                   padding: [4, 10],
                   borderRadius: 8,
                   borderColor: 'rgba(125, 211, 252, 0.5)',
@@ -213,6 +213,18 @@
         if (params.seriesType === 'scatter3D' && params.data && params.data.city) {
           renderPhotoCard(params.data.city);
         }
+      });
+
+      // 鼠标悬停散点 → 联动高亮对应的 bar3D 光柱（emphasis + label）
+      // 同时把另一个散点的 hover label 也显示出来
+      chart.on('mouseover', { seriesType: 'scatter3D' }, (params) => {
+        if (params.dataIndex == null) return;
+        // 高亮 bar3D 对应位置（联动光柱）
+        chart.dispatchAction({ type: 'highlight', seriesIndex: 0, dataIndex: params.dataIndex });
+      });
+      chart.on('mouseout', { seriesType: 'scatter3D' }, (params) => {
+        if (params.dataIndex == null) return;
+        chart.dispatchAction({ type: 'downplay', seriesIndex: 0, dataIndex: params.dataIndex });
       });
 
       window.addEventListener('resize', () => chart.resize());
