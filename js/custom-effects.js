@@ -369,24 +369,25 @@
     const oldHero = document.getElementById('hero-earth');
     if (oldHero) oldHero.remove();
 
-    // 第 1 段：满屏卫星视角首屏
+    // 第 1 段：满屏 3D 地球首屏
     const hero = document.createElement('section');
     hero.id = 'hero-earth';
     hero.className = 'hero-earth';
     hero.innerHTML = `
-      <div class="hero-earth-bg" role="img" aria-label="从太空俯瞰亚洲东部"></div>
-      <div class="hero-earth-vignette"></div>
+      <div id="hero-globe" class="hero-globe" aria-label="可旋转缩放的 3D 地球"></div>
       <div class="hero-earth-overlay">
         <div class="hero-earth-head">
           <h1 class="hero-earth-title">我的足迹</h1>
-          <p class="hero-earth-sub">从太空俯瞰，这颗星球上我去过的地方</p>
+          <p class="hero-earth-sub">这颗星球上我去过的地方</p>
         </div>
-        <div class="hero-earth-dots" aria-label="我标注的城市"></div>
         <div class="hero-earth-stats"></div>
         <button class="hero-earth-scroll-hint" aria-label="向下滚动到博客">
           <span>向下滑动，看我的博客</span>
           <i class="hero-earth-arrow"></i>
         </button>
+        <div class="hero-earth-hint-controls">
+          <span class="hero-earth-tip">拖动旋转 · 滚轮缩放 · 点光点看照片</span>
+        </div>
       </div>
     `;
 
@@ -408,7 +409,14 @@
       wrapper.scrollIntoView({ behavior: 'smooth' });
     });
 
-    loadScript('/js/travel-map.js', 'travel-map-script').catch(() => hero.remove());
+    // 加载链：ECharts → echarts-gl → travel-map
+    loadScript('/js/vendor/echarts.min.js', 'echarts-vendor')
+      .then(() => loadScript('/js/vendor/echarts-gl.min.js', 'echarts-gl-vendor'))
+      .then(() => loadScript('/js/travel-map.js', 'travel-map-script'))
+      .catch((err) => {
+        console.warn('[hero-earth] 加载失败：', err);
+        hero.remove();
+      });
   };
 
   // ========================================

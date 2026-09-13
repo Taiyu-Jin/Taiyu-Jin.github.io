@@ -555,11 +555,11 @@ code {
 }
 
 /* -------------------------------------------------------------------------------------
- * 9. 首页：满屏卫星视角首屏 → 滚动过渡到博客列表
- *    风格：从太空俯瞰亚洲的真实卫星图像，城市以白色光点标注在地球表面上。
+ * 9. 首页：满屏 3D 地球首屏 → 滚动过渡到博客列表
+ *    风格：参考高德地图 3D 球体地球，黑色太空背景、可拖动旋转 / 滚轮缩放
  * ------------------------------------------------------------------------------------ */
 
-/* 第 1 段：满屏卫星视角首屏 — 突破 .main-content 限宽撑满整个视口宽度 */
+/* 第 1 段：满屏 3D 地球首屏 — 突破 .main-content 限宽撑满视口 */
 .hero-earth {
   position: relative;
   width: 100vw;
@@ -570,228 +570,129 @@ code {
   margin-right: calc(50% - 50vw);
   margin-top: calc(-1 * var(--component-gap, 40px));
   margin-bottom: 0;
-  background: #02101e;
+  background: #02060e; /* 太空深蓝 */
   transition: opacity 0.2s linear;
   will-change: transform, opacity;
 }
 
-.hero-earth-bg {
-  position: absolute;
-  inset: -8%; /* 留视差余量 */
-  background-image: url('/img/earth/asia-from-space.jpg');
-  background-size: cover;
-  background-position: 50% 50%;
-  will-change: transform;
-  animation: earth-breathe 18s ease-in-out infinite alternate;
-}
-
-@keyframes earth-breathe {
-  0% { transform: scale(1.05); }
-  100% { transform: scale(1.09); }
-}
-
-/* 顶部/底部渐变暗角：保证标题/统计文字可读 */
-.hero-earth-vignette {
+/* 3D 地球 canvas 容器 */
+.hero-globe {
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(180deg, rgba(2, 16, 30, 0.55) 0%, rgba(2, 16, 30, 0.10) 30%, rgba(2, 16, 30, 0.15) 70%, rgba(2, 16, 30, 0.55) 100%);
+  z-index: 1;
+}
+
+/* 太空星点装饰层（点缀背景） */
+.hero-earth::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image:
+    radial-gradient(1px 1px at 12% 24%, rgba(255, 255, 255, 0.7), transparent 60%),
+    radial-gradient(1px 1px at 28% 64%, rgba(255, 255, 255, 0.5), transparent 60%),
+    radial-gradient(1px 1px at 65% 18%, rgba(255, 255, 255, 0.6), transparent 60%),
+    radial-gradient(1px 1px at 82% 72%, rgba(255, 255, 255, 0.5), transparent 60%),
+    radial-gradient(1px 1px at 44% 88%, rgba(255, 255, 255, 0.6), transparent 60%),
+    radial-gradient(1px 1px at 90% 40%, rgba(255, 255, 255, 0.5), transparent 60%);
   pointer-events: none;
 }
 
+/* 浮在 3D 地球上方的 UI */
 .hero-earth-overlay {
-  position: relative;
+  position: absolute;
+  inset: 0;
   z-index: 2;
-  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  padding: 28px 20px 0;
+  justify-content: space-between;
+  padding: 36px 24px 0;
+  pointer-events: none;
+}
+.hero-earth-overlay > .hero-earth-head { align-self: center; }
+.hero-earth-overlay > .hero-earth-stats,
+.hero-earth-overlay > .hero-earth-hint-controls {
+  /* 这两个是绝对定位子元素，flex 布局不再分配空间 */
+  position: absolute;
+}
+.hero-earth-overlay > .hero-earth-stats {
+  right: 32px;
+  bottom: 110px;
+}
+.hero-earth-overlay > .hero-earth-hint-controls {
+  right: 28px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
-/* 标题：漂浮在地球上方的太空感文字 */
+.hero-earth-overlay > * { pointer-events: auto; }
+
 .hero-earth-head {
   text-align: center;
-  margin-top: 8px;
-  color: #f0f6ff;
-  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.5);
+  color: #ffffff;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.55);
 }
 
 .hero-earth-title {
   margin: 0;
-  font-size: clamp(1.8rem, 3.8vw, 2.6rem);
+  font-size: clamp(1.9rem, 4vw, 2.7rem);
   font-weight: 700;
   letter-spacing: 0.02em;
   color: #ffffff;
 }
 
 .hero-earth-sub {
-  margin: 10px 0 0;
+  margin: 12px 0 0;
   font-size: 1rem;
-  color: rgba(240, 246, 255, 0.78);
-  letter-spacing: 0.04em;
+  color: rgba(220, 232, 255, 0.78);
+  letter-spacing: 0.06em;
   font-weight: 300;
 }
 
-/* 城市点层：覆盖在地球上 */
-.hero-earth-dots {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-/* 城市光点 */
-.earth-dot {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  width: 18px;
-  height: 18px;
-  padding: 0;
-  border: none;
-  background: none;
-  pointer-events: auto;
-  cursor: pointer;
-}
-
-.earth-dot::before,
-.earth-dot::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  pointer-events: none;
-}
-
-.earth-dot::before {
-  background: #ffffff;
-  box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.5), 0 0 12px rgba(180, 220, 255, 0.9);
-  width: 8px;
-  height: 8px;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 2;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.earth-dot::after {
-  border: 1.5px solid rgba(255, 255, 255, 0.85);
-  width: 18px;
-  height: 18px;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) scale(0.4);
-  opacity: 0;
-  animation: earth-pulse 2.6s ease-out infinite;
-}
-
-@keyframes earth-pulse {
-  0% { transform: translate(-50%, -50%) scale(0.4); opacity: 0.9; }
-  100% { transform: translate(-50%, -50%) scale(3.2); opacity: 0; }
-}
-
-.earth-dot:hover::before {
-  transform: translate(-50%, -50%) scale(1.4);
-  box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.9), 0 0 18px rgba(180, 220, 255, 1);
-}
-
-.earth-dot-label {
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translate(-50%, 8px);
-  white-space: nowrap;
-  font-size: 12px;
-  font-weight: 500;
-  color: #ffffff;
-  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.85), 0 0 2px rgba(0, 0, 0, 0.6);
-  letter-spacing: 0.02em;
-}
-
-.earth-dot-tip {
-  position: absolute;
-  bottom: calc(100% + 14px);
-  left: 50%;
-  transform: translateX(-50%) translateY(6px);
-  width: 220px;
-  max-width: 64vw;
-  background: rgba(10, 18, 30, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 12px;
-  padding: 10px 12px;
-  color: #ffffff;
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s ease, transform 0.2s ease;
-  z-index: 3;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.earth-dot-tip img {
-  width: 100%;
-  height: 110px;
-  object-fit: cover;
-  border-radius: 8px;
-  display: block;
-}
-
-.earth-dot-tip .tip-date {
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.6);
-  letter-spacing: 0.04em;
-}
-
-.earth-dot-tip .tip-note {
-  font-size: 12px;
-  line-height: 1.5;
-  color: rgba(255, 255, 255, 0.9);
-}
-
-.earth-dot:hover .earth-dot-tip,
-.earth-dot:focus-visible .earth-dot-tip {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-}
-
-/* 统计数字：底部靠右浮在地球上 */
+/* 统计数字：绝对定位到右下角，避免遮住城市光点 */
 .hero-earth-stats {
   position: absolute;
-  right: 36px;
-  bottom: 96px;
+  right: 32px;
+  bottom: 110px;
   display: flex;
-  gap: 36px;
+  gap: 44px;
   z-index: 3;
   color: #ffffff;
-  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.7);
+  pointer-events: none;
 }
 
 .hero-earth .hero-stat-num {
   color: #ffffff;
   font-size: 1.8rem;
-  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+  font-weight: 700;
 }
 
 .hero-earth .hero-stat-label {
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(220, 232, 255, 0.7);
 }
 
-/* 向下滚动引导：底部居中 */
-.hero-earth-scroll-hint {
+.hero-earth-hint-controls {
   position: absolute;
-  left: 50%;
-  bottom: 28px;
-  transform: translateX(-50%);
-  z-index: 3;
+  top: 50%;
+  right: 28px;
+  transform: translateY(-50%);
+  writing-mode: vertical-rl;
+  letter-spacing: 0.4em;
+  font-size: 11px;
+  color: rgba(180, 200, 230, 0.55);
+  text-transform: uppercase;
+  pointer-events: none;
+  user-select: none;
+}
+
+.hero-earth-scroll-hint {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 10px;
+  margin-bottom: 28px;
   background: none;
   border: none;
   color: rgba(255, 255, 255, 0.85);
@@ -803,9 +704,7 @@ code {
   transition: color 0.2s ease;
 }
 
-.hero-earth-scroll-hint:hover {
-  color: #ffffff;
-}
+.hero-earth-scroll-hint:hover { color: #ffffff; }
 
 .hero-earth-arrow {
   width: 18px;
@@ -831,22 +730,8 @@ code {
 }
 
 @media (max-width: 760px) {
-  .hero-earth {
-    min-height: 520px;
-  }
-  .hero-earth-overlay {
-    padding-left: 12px;
-    padding-right: 12px;
-  }
-  .hero-earth-stats {
-    right: 18px;
-    bottom: 80px;
-    gap: 24px;
-  }
-  .earth-dot-label {
-    font-size: 11px;
-  }
-  .earth-dot-tip {
-    width: 180px;
-  }
+  .hero-earth { min-height: 520px; }
+  .hero-earth-overlay { padding-left: 12px; padding-right: 12px; }
+  .hero-earth-stats { gap: 28px; }
+  .hero-earth-hint-controls { display: none; }
 }
