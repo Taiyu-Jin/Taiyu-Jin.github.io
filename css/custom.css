@@ -598,7 +598,7 @@ code {
   pointer-events: none;
 }
 
-/* 浮在 3D 地球上方的 UI */
+/* 浮在 3D 地球上方的 UI —— 只有一句梦想标题，定位在地球上方留白处 */
 .hero-earth-overlay {
   position: absolute;
   inset: 0;
@@ -606,24 +606,9 @@ code {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  padding: 36px 24px 0;
+  justify-content: flex-start;
+  padding: calc(var(--header-height) + 36px) 24px 0;
   pointer-events: none;
-}
-.hero-earth-overlay > .hero-earth-head { align-self: center; }
-.hero-earth-overlay > .hero-earth-stats,
-.hero-earth-overlay > .hero-earth-hint-controls {
-  /* 这两个是绝对定位子元素，flex 布局不再分配空间 */
-  position: absolute;
-}
-.hero-earth-overlay > .hero-earth-stats {
-  right: 32px;
-  bottom: 110px;
-}
-.hero-earth-overlay > .hero-earth-hint-controls {
-  right: 28px;
-  top: 50%;
-  transform: translateY(-50%);
 }
 
 .hero-earth-overlay > * { pointer-events: auto; }
@@ -636,10 +621,11 @@ code {
 
 .hero-earth-title {
   margin: 0;
-  font-size: clamp(1.9rem, 4vw, 2.7rem);
-  font-weight: 700;
-  letter-spacing: 0.02em;
+  font-size: clamp(1.6rem, 3.2vw, 2.4rem);
+  font-weight: 600;
+  letter-spacing: 0.06em;
   color: #ffffff;
+  white-space: nowrap;
 }
 
 .hero-earth-sub {

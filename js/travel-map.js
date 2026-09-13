@@ -20,48 +20,25 @@
   const dom = document.getElementById('hero-globe');
   if (!dom || typeof echarts === 'undefined' || !echarts.graphic) return;
 
-  // 地球纹理（白天 + 夜景 + 海拔）—— 本地静态资源，不依赖外部 CDN
-  // earth-blue.jpg 为 1600x800 标准 2:1 等距柱状全球白天贴图（真实陆地/海洋）
-  const EARTH_TEX = '/img/earth/earth-blue.jpg';
-  const NIGHT_TEX = '/img/earth/earth-night.jpg';
-  const BUMP_TEX = '/img/earth/earth-topology.png';
+  // 地球纹理 —— 4096x2048 4K 等距柱状全球白天贴图（无云高清），本地静态资源
+  const EARTH_TEX = '/img/earth/earth-hd.jpg';
 
   fetch('/data/travel-data.json')
     .then((r) => r.json())
     .then((travel) => {
-      const hero = document.getElementById('hero-earth');
-      const titleEl = hero && hero.querySelector('.hero-earth-title');
-      const subEl = hero && hero.querySelector('.hero-earth-sub');
-      const statEl = hero && hero.querySelector('.hero-earth-stats');
-      if (titleEl && travel.title) titleEl.textContent = travel.title;
-      if (subEl && travel.subtitle) subEl.textContent = travel.subtitle;
-
       const cities = Array.isArray(travel.cities) ? travel.cities : [];
 
-      if (statEl) {
-        statEl.innerHTML =
-          '<div class="hero-stat"><span class="hero-stat-num">' + cities.length + '</span><span class="hero-stat-label">造访过的地方</span></div>' +
-          '<div class="hero-stat"><span class="hero-stat-num">' +
-          new Set(cities.map((c) => c.region).filter(Boolean)).size +
-          '</span><span class="hero-stat-label">片 区</span></div>';
-      }
+      const chart = echarts.init(dom, null, {
+        renderer: 'canvas',
+        devicePixelRatio: Math.min(window.devicePixelRatio || 1, 2)
+      });
 
-      const chart = echarts.init(dom, null, { renderer: 'canvas' });
-
-      // 城市 → 3D 球面坐标 + 光柱
+      // 城市 → 3D 球面坐标 + 光点
       const cityScatter = cities
         .filter((c) => Array.isArray(c.coord))
         .map((c) => ({
           name: c.name,
           value: c.coord, // [lon, lat]
-          city: c
-        }));
-
-      const cityBars = cities
-        .filter((c) => Array.isArray(c.coord))
-        .map((c) => ({
-          name: c.name,
-          value: c.coord,
           city: c
         }));
 

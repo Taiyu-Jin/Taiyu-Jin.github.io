@@ -377,16 +377,7 @@
       <div id="hero-globe" class="hero-globe" aria-label="可旋转缩放的 3D 地球"></div>
       <div class="hero-earth-overlay">
         <div class="hero-earth-head">
-          <h1 class="hero-earth-title">我的足迹</h1>
-          <p class="hero-earth-sub">这颗星球上我去过的地方</p>
-        </div>
-        <div class="hero-earth-stats"></div>
-        <button class="hero-earth-scroll-hint" aria-label="向下滚动到博客">
-          <span>向下滑动，看我的博客</span>
-          <i class="hero-earth-arrow"></i>
-        </button>
-        <div class="hero-earth-hint-controls">
-          <span class="hero-earth-tip">拖动旋转 · 滚轮缩放 · 点光点看照片</span>
+          <h1 class="hero-earth-title">我的梦想是环游世界</h1>
         </div>
       </div>
     `;
@@ -403,11 +394,7 @@
     mainContent.appendChild(hero);
     mainContent.appendChild(wrapper);
 
-    // 向下滚动引导：点击滚动到博客段落
-    const hint = hero.querySelector('.hero-earth-scroll-hint');
-    hint.addEventListener('click', () => {
-      wrapper.scrollIntoView({ behavior: 'smooth' });
-    });
+    // 向下滚动引导：点击滚动到博客段落（已移除，改由自然滚动）
 
     // 加载链：ECharts → echarts-gl → travel-map
     loadScript('/js/vendor/echarts.min.js', 'echarts-vendor')
