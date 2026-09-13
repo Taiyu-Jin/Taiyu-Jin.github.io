@@ -98,6 +98,20 @@
 
       chart.setOption({
         backgroundColor: 'transparent',
+        tooltip: {
+          trigger: 'item',
+          backgroundColor: 'rgba(10, 22, 48, 0.92)',
+          borderColor: 'rgba(125, 211, 252, 0.5)',
+          borderWidth: 1,
+          padding: [4, 10],
+          textStyle: { color: '#ffffff', fontSize: 13, fontWeight: 600 },
+          extraCssText: 'backdrop-filter: blur(10px); border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.4);',
+          // 只对 scatter3D 显示城市名标签（hover 看名字），bar3D 不显示
+          formatter: function (p) {
+            if (p.seriesType === 'scatter3D') return p.name || '';
+            return '';
+          }
+        },
         globe: {
           baseTexture: EARTH_TEX,
           environment: NIGHT_TEX, // 暗面叠加夜景灯光（高德地图同款）
