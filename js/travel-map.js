@@ -75,6 +75,13 @@
             ambient: { intensity: 1.0 },
             main: { intensity: 0.6, alpha: 20, beta: 20 }
           },
+          atmosphere: {
+            show: true,
+            color: '#3d8bff',
+            glowPower: 6,
+            innerGlowPower: 2,
+            offset: 0.15
+          },
           viewControl: {
             autoRotate: true,
             autoRotateSpeed: 8,
