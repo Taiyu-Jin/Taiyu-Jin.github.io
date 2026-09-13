@@ -380,6 +380,11 @@
           <h1 class="hero-earth-title">我的梦想是环游世界</h1>
         </div>
       </div>
+      <div class="hero-earth-shooting-stars" aria-hidden="true">
+        <span class="shooting-star star-1"></span>
+        <span class="shooting-star star-2"></span>
+        <span class="shooting-star star-3"></span>
+      </div>
     `;
 
     // 第 2 段：把原有内容（文章列表）包进一个容器，作为博客段落
@@ -420,6 +425,37 @@
     loadScript('/js/vendor/echarts.min.js', 'echarts-vendor')
       .then(() => loadScript('/js/vendor/echarts-gl.min.js', 'echarts-gl-vendor'))
       .then(() => loadScript('/js/travel-map.js', 'travel-map-script'))
+      .then(() => {
+        // 鼠标视差：跟随鼠标位置让地球轻微旋转
+        const chart = window.echarts && window.echarts.getInstanceByDom(document.getElementById('hero-globe'));
+        if (!chart) return;
+        const baseAlpha = 30, baseBeta = 35; // 与 travel-map.js viewControl 一致
+        let raf = 0, targetAlpha = baseAlpha, targetBeta = baseBeta, currAlpha = baseAlpha, currBeta = baseBeta;
+
+        hero.addEventListener('mousemove', (e) => {
+          const r = hero.getBoundingClientRect();
+          const dx = (e.clientX - r.left) / r.width - 0.5;
+          const dy = (e.clientY - r.top) / r.height - 0.5;
+          targetAlpha = baseAlpha + dx * 8;
+          targetBeta = baseBeta - dy * 6;
+          if (!raf) raf = requestAnimationFrame(tick);
+        });
+        hero.addEventListener('mouseleave', () => {
+          targetAlpha = baseAlpha; targetBeta = baseBeta;
+          if (!raf) raf = requestAnimationFrame(tick);
+        });
+
+        const tick = () => {
+          currAlpha += (targetAlpha - currAlpha) * 0.08;
+          currBeta += (targetBeta - currBeta) * 0.08;
+          try { chart.setOption({ globe: { viewControl: { alpha: currAlpha, beta: currBeta } } }); } catch (e) {}
+          if (Math.abs(targetAlpha - currAlpha) > 0.05 || Math.abs(targetBeta - currBeta) > 0.05) {
+            raf = requestAnimationFrame(tick);
+          } else {
+            raf = 0;
+          }
+        };
+      })
       .catch((err) => {
         console.warn('[hero-earth] 加载失败：', err);
         hero.remove();

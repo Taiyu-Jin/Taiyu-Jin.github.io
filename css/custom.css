@@ -665,6 +665,58 @@ code {
   letter-spacing: 0.06em;
   color: #ffffff;
   white-space: nowrap;
+  animation: title-breathe 6s ease-in-out infinite;
+}
+
+/* 标题：缓慢淡入 + 轻微上下浮动（电影字幕感） */
+@keyframes title-breathe {
+  0% { opacity: 0.4; transform: translateY(4px); }
+  50% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0.4; transform: translateY(4px); }
+}
+
+/* -------------------------------------------------------------------------------------
+ * 流星：缓慢划过天空的细长光带
+ * ------------------------------------------------------------------------------------ */
+.hero-earth-shooting-stars {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.shooting-star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: #ffffff;
+  opacity: 0;
+}
+
+/* 流星本体：一条从左上到右下的细长渐变光带 */
+.shooting-star::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 140px;
+  height: 1.5px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.9) 0%, rgba(160, 200, 255, 0.35) 60%, transparent 100%);
+  transform: translateX(-140px);
+}
+
+.star-1 { top: 12%; left: 70%; animation: shooting 9s linear 0s infinite; }
+.star-2 { top: 28%; left: 30%; animation: shooting 13s linear 4s infinite; }
+.star-3 { top: 6%;  left: 50%; animation: shooting 11s linear 8s infinite; }
+
+@keyframes shooting {
+  0%   { opacity: 0; transform: translate(0, 0) rotate(-35deg); }
+  3%   { opacity: 1; }
+  10%  { opacity: 1; transform: translate(-320px, 220px) rotate(-35deg); }
+  11%  { opacity: 0; }
+  100% { opacity: 0; transform: translate(-320px, 220px) rotate(-35deg); }
 }
 
 .hero-earth-sub {

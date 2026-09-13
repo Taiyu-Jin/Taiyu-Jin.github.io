@@ -22,6 +22,8 @@
 
   // 地球纹理 —— 4096x2048 4K 等距柱状全球白天贴图（无云高清），本地静态资源
   const EARTH_TEX = '/img/earth/earth-hd.jpg';
+  // 夜景灯光贴图：4096x2048，等距柱状，黑色海洋 + 暖黄色城市灯光
+  const NIGHT_TEX = '/img/earth/earth-night.jpg';
 
   fetch('/data/travel-data.json')
     .then((r) => r.json())
@@ -70,10 +72,11 @@
         },
         globe: {
           baseTexture: EARTH_TEX,
-          shading: 'color',
+          environment: NIGHT_TEX, // 暗面叠加夜景灯光（高德地图同款）
+          shading: 'lambert',
           light: {
-            ambient: { intensity: 1.0 },
-            main: { intensity: 0.6, alpha: 20, beta: 20 }
+            ambient: { intensity: 0.45 },
+            main: { intensity: 1.4, alpha: 30, beta: 40 }
           },
           atmosphere: {
             show: true,
@@ -81,6 +84,13 @@
             glowPower: 6,
             innerGlowPower: 2,
             offset: 0.15
+          },
+          postEffect: {
+            enable: true,
+            bloom: {
+              enable: true,
+              bloomIntensity: 0.6
+            }
           },
           viewControl: {
             autoRotate: true,
