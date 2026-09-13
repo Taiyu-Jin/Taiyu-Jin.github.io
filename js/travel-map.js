@@ -1,14 +1,13 @@
 /**
  * travel-map.js — 首页"足迹 · 3D 地球"
  *
- * 使用 ECharts GL 渲染可旋转的 3D 球体地球（参考高德地图风格）：
+ * 使用 ECharts GL 渲染固定视角的 3D 球体地球：
  *   - 太空深蓝背景 + 星空（由 CSS 提供）
  *   - 地球纹理（白天贴图 + 暗面夜景灯光）
- *   - 城市光点（去过的城市）
- *   - 城市光柱（bar3D，向上立光柱）
- *   - 悬停光柱 → 光柱高亮 + 城市名标签
+ *   - 城市光点（去过的城市，白点蓝晕）
+ *   - 悬停光点 → 光点高亮 + 城市名标签（tooltip）
  *   - 点击光点 → 弹出照片卡（DOM 浮层，含照片/日期/笔记）
- *   - 鼠标拖动旋转 / 滚轮缩放 / 鼠标视差
+ *   - 固定视角（不自动旋转），仍可鼠标拖动旋转 / 滚轮缩放
  *
  * 数据：
  *   - /data/travel-data.json —— 去过的地方
@@ -26,10 +25,6 @@
   // 夜景灯光贴图：4096x2048，等距柱状，黑色海洋 + 暖黄色城市灯光
   const NIGHT_TEX = '/img/earth/earth-night.jpg';
 
-  // 光柱高度（相对地球半径的可视比例，值越大柱越高）
-  const BAR_HEIGHT = 9;
-  const BAR_MIN_HEIGHT = 1.5;
-
   fetch('/data/travel-data.json')
     .then((r) => r.json())
     .then((travel) => {
@@ -46,15 +41,6 @@
         .map((c) => ({
           name: c.name,
           value: c.coord, // [lon, lat]
-          city: c
-        }));
-
-      // 城市 → 光柱数据 [lon, lat, height]
-      const cityBars = cities
-        .filter((c) => Array.isArray(c.coord))
-        .map((c) => ({
-          name: c.name,
-          value: [c.coord[0], c.coord[1], BAR_HEIGHT],
           city: c
         }));
 
@@ -106,7 +92,7 @@
           padding: [4, 10],
           textStyle: { color: '#ffffff', fontSize: 13, fontWeight: 600 },
           extraCssText: 'backdrop-filter: blur(10px); border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.4);',
-          // 只对 scatter3D 显示城市名标签（hover 看名字），bar3D 不显示
+          // 只对 scatter3D 显示城市名标签（hover 看名字）
           formatter: function (p) {
             if (p.seriesType === 'scatter3D') return p.name || '';
             return '';
@@ -135,56 +121,15 @@
             }
           },
           viewControl: {
-            autoRotate: true,
-            autoRotateSpeed: 8,
-            distance: 220,
+            autoRotate: false, // 取消自动旋转，固定视角
+            distance: 280, // 拉远一点，给上方标题留出空间
             alpha: 30,
             beta: 35,
             targetCoord: [105, 30]
           }
         },
         series: [
-          // 光柱（bar3D）：默认淡显示；悬停时高亮 + 显示城市名标签
-          {
-            type: 'bar3D',
-            coordinateSystem: 'globe',
-            data: cityBars,
-            barSize: 1.6,
-            minHeight: BAR_MIN_HEIGHT,
-            maxHeight: BAR_HEIGHT,
-            bevelSize: 0.4,
-            bevelSmoothness: 4,
-            shading: 'lambert',
-            silent: true, // 光柱不响应鼠标事件（避免与光点抢 hover/click）
-            itemStyle: {
-              color: 'rgba(125, 211, 252, 0.35)', // 默认淡光柱
-              opacity: 0.35
-            },
-            emphasis: {
-              itemStyle: {
-                color: '#ffffff',
-                opacity: 1,
-                shadowBlur: 18,
-                shadowColor: '#7dd3fc'
-              },
-              label: {
-                show: true,
-                distance: 4,
-                formatter: '{b}',
-                textStyle: {
-                  color: '#ffffff',
-                  fontSize: 14,
-                  fontWeight: 600,
-                  backgroundColor: 'rgba(10, 22, 48, 0.92)',
-                  padding: [4, 10],
-                  borderRadius: 8,
-                  borderColor: 'rgba(125, 211, 252, 0.5)',
-                  borderWidth: 1
-                }
-              }
-            }
-          },
-          // 城市光点（scatter3D）：点击弹出照片卡
+          // 城市光点（scatter3D）：悬停高亮 + 城市名，点击弹出照片卡
           {
             type: 'scatter3D',
             coordinateSystem: 'globe',
@@ -196,13 +141,13 @@
               borderColor: '#7dd3fc',
               borderWidth: 1.5,
               shadowColor: '#7dd3fc',
-              shadowBlur: 12
+              shadowBlur: 14
             },
             emphasis: {
               itemStyle: {
                 color: '#ffffff',
                 shadowColor: '#ffffff',
-                shadowBlur: 20
+                shadowBlur: 24
               },
               label: {
                 show: true,
@@ -227,18 +172,6 @@
         if (params.seriesType === 'scatter3D' && params.data && params.data.city) {
           renderPhotoCard(params.data.city);
         }
-      });
-
-      // 鼠标悬停散点 → 联动高亮对应的 bar3D 光柱（emphasis + label）
-      // 同时把另一个散点的 hover label 也显示出来
-      chart.on('mouseover', { seriesType: 'scatter3D' }, (params) => {
-        if (params.dataIndex == null) return;
-        // 高亮 bar3D 对应位置（联动光柱）
-        chart.dispatchAction({ type: 'highlight', seriesIndex: 0, dataIndex: params.dataIndex });
-      });
-      chart.on('mouseout', { seriesType: 'scatter3D' }, (params) => {
-        if (params.dataIndex == null) return;
-        chart.dispatchAction({ type: 'downplay', seriesIndex: 0, dataIndex: params.dataIndex });
       });
 
       window.addEventListener('resize', () => chart.resize());

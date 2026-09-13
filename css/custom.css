@@ -641,12 +641,12 @@ code {
 .hero-earth-overlay {
   position: absolute;
   inset: 0;
-  z-index: 2;
+  z-index: 3;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding: calc(var(--header-height) + 36px) 24px 0;
+  padding: calc(var(--header-height) + 8px) 24px 0;
   pointer-events: none;
 }
 
@@ -655,7 +655,7 @@ code {
 .hero-earth-head {
   text-align: center;
   color: #ffffff;
-  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.55);
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.85), 0 0 32px rgba(0, 0, 0, 0.55);
 }
 
 .hero-earth-title {
@@ -795,6 +795,39 @@ code {
 @keyframes hero-arrow-bounce {
   0%, 100% { transform: rotate(45deg) translate(0, 0); opacity: 0.5; }
   50% { transform: rotate(45deg) translate(4px, 4px); opacity: 1; }
+}
+
+/* 下方半透明闪烁向下箭头：引导进入博客 */
+.hero-scroll-down {
+  position: absolute;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  background: none;
+  border: none;
+  padding: 0;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  opacity: 0.6;
+  transition: color 0.25s ease, opacity 0.25s ease;
+  animation: hero-scroll-flicker 2s ease-in-out infinite;
+}
+
+.hero-scroll-down:hover {
+  color: #ffffff;
+  opacity: 1;
+}
+
+/* 半透明闪烁：透明度在 0.3~0.8 之间缓慢呼吸 */
+@keyframes hero-scroll-flicker {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.85; }
 }
 
 /* 第 2 段：博客列表，滚动后淡入 */

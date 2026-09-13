@@ -374,7 +374,7 @@
     hero.id = 'hero-earth';
     hero.className = 'hero-earth';
     hero.innerHTML = `
-      <div id="hero-globe" class="hero-globe" aria-label="可旋转缩放的 3D 地球"></div>
+      <div id="hero-globe" class="hero-globe" aria-label="3D 地球"></div>
       <div class="hero-earth-overlay">
         <div class="hero-earth-head">
           <h1 class="hero-earth-title">我的梦想是环游世界</h1>
@@ -385,6 +385,9 @@
         <span class="shooting-star star-2"></span>
         <span class="shooting-star star-3"></span>
       </div>
+      <button class="hero-scroll-down" type="button" aria-label="进入博客">
+        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg>
+      </button>
     `;
 
     // 第 2 段：把原有内容（文章列表）包进一个容器，作为博客段落
@@ -398,6 +401,14 @@
 
     mainContent.appendChild(hero);
     mainContent.appendChild(wrapper);
+
+    // 向下箭头：点击平滑滚动到博客段落
+    const scrollDownBtn = hero.querySelector('.hero-scroll-down');
+    if (scrollDownBtn) {
+      scrollDownBtn.addEventListener('click', () => {
+        wrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
 
     // 滚动到博客段落时淡入（IntersectionObserver 驱动）
     const revealBlog = () => {
