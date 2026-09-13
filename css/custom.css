@@ -116,6 +116,8 @@
 .header-wrapper .site-name {
   letter-spacing: 0;
   font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 /* 首页首屏之上，导航文字使用深色（毛玻璃底上可读），去掉脏阴影 */
@@ -133,6 +135,19 @@
 .header-wrapper .menu-list .menu-item::before {
   height: 2px;
   border-radius: 1px;
+}
+
+/* 菜单项：防止被挤压换行；菜单更紧凑以容纳所有项 */
+.header-wrapper .menu-list {
+  flex-wrap: nowrap !important;
+}
+.header-wrapper .menu-list .menu-item,
+.header-wrapper .menu-list .menu-item a {
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.header-wrapper .menu-list .menu-item a {
+  padding: 4px 8px;
 }
 
 /* -------------------------------------------------------------------------------------
@@ -540,94 +555,168 @@ code {
 }
 
 /* -------------------------------------------------------------------------------------
- * 9. 首页"足迹 · 中国"科技感地图
+ * 9. 首页：满屏足迹地图首屏 → 滚动过渡到博客列表（真实地图质感）
  * ------------------------------------------------------------------------------------ */
-.travel-map-section {
+
+/* 第 1 段：满屏地图首屏（占满导航以下视口） */
+.hero-map {
   position: relative;
+  height: calc(100vh - var(--header-height));
+  min-height: 560px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
-  margin-bottom: var(--component-gap);
-  padding: 30px 22px 14px;
-  border-radius: var(--box-border-radius);
-  background: radial-gradient(1200px 520px at 18% -10%, #17305e 0%, #0a1330 52%, #070b1c 100%);
-  color: #eaf2ff;
+  margin-top: calc(-1 * var(--component-gap, 40px)); /* 抵消 .page-main-content-middle 的上 padding */
+  padding: 24px 20px 0;
+  background:
+    linear-gradient(180deg, #fbfaf7 0%, #f3f0e8 100%);
+  transition: opacity 0.2s linear;
+  will-change: transform, opacity;
 }
 
-/* 网格 + 辉光装饰层 */
-.travel-map-section::before {
+/* 真实地图的纸张纹理感 */
+.hero-map::before {
   content: '';
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(to right, rgba(0, 229, 255, 0.05) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(0, 229, 255, 0.05) 1px, transparent 1px);
-  background-size: 44px 44px;
+    radial-gradient(rgba(120, 100, 70, 0.04) 1px, transparent 1px);
+  background-size: 4px 4px;
   pointer-events: none;
 }
 
-.travel-map-section::after {
-  content: '';
-  position: absolute;
-  top: -120px;
-  right: -80px;
-  width: 380px;
-  height: 380px;
-  background: radial-gradient(circle, rgba(0, 229, 255, 0.14) 0%, transparent 65%);
-  pointer-events: none;
-}
-
-.travel-map-head {
-  position: relative;
-  z-index: 1;
+.hero-map-head {
   text-align: center;
-  margin-bottom: 6px;
+  z-index: 1;
 }
 
-.travel-map-title {
+.hero-map-title {
   margin: 0;
-  font-size: 1.7rem;
+  font-size: clamp(1.9rem, 4vw, 2.8rem);
   font-weight: 700;
-  letter-spacing: 0.14em;
-  background: linear-gradient(90deg, #9be8ff 0%, #00e5ff 55%, #4d8bff 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  letter-spacing: 0.02em;
+  color: #2c2a26;
 }
 
-.travel-map-sub {
-  margin: 8px 0 0;
-  font-size: 0.85rem;
+.hero-map-sub {
+  margin: 12px 0 0;
+  font-size: 1.05rem;
+  color: #8a8378;
+  letter-spacing: 0.04em;
+}
+
+.hero-map-canvas {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 auto;
+  width: 100%;
+  max-width: 1080px;
+  min-height: 320px;
+  margin-top: 4px;
+  margin-bottom: 8px;
+}
+
+.hero-map-stats {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  gap: 48px;
+  margin: 0 0 10px;
+}
+
+.hero-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.hero-stat-num {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #2c2a26;
+  font-variant-numeric: tabular-nums;
+}
+
+.hero-stat-label {
+  font-size: 0.8rem;
+  color: #8a8378;
+  letter-spacing: 0.06em;
+}
+
+/* 向下滚动引导：作为 hero-map 最后一个块，在统计数字下方 */
+.hero-map-scroll-hint {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  margin: 0 0 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  background: none;
+  border: none;
+  color: #8a8378;
+  font-size: 0.82rem;
   letter-spacing: 0.08em;
-  color: rgba(234, 242, 255, 0.55);
+  cursor: pointer;
+  opacity: 0.85;
+  transition: opacity 0.2s ease;
+  font-family: inherit;
 }
 
-.travel-map-canvas {
-  position: relative;
-  z-index: 1;
-  height: min(64vh, 600px);
-  min-height: 420px;
+.hero-map-scroll-hint:hover {
+  opacity: 1;
 }
 
-.travel-map-hint {
-  position: relative;
-  z-index: 1;
-  text-align: center;
-  padding: 2px 0 12px;
-  font-size: 12px;
-  letter-spacing: 0.1em;
-  color: rgba(0, 229, 255, 0.55);
+.hero-map-arrow {
+  width: 18px;
+  height: 18px;
+  border-right: 2px solid #8a8378;
+  border-bottom: 2px solid #8a8378;
+  transform: rotate(45deg);
+  animation: hero-arrow-bounce 1.8s ease-in-out infinite;
 }
+
+@keyframes hero-arrow-bounce {
+  0%, 100% { transform: rotate(45deg) translate(0, 0); opacity: 0.5; }
+  50% { transform: rotate(45deg) translate(4px, 4px); opacity: 1; }
+}
+
+/* 第 2 段：博客列表，滚动后淡入 */
+.blog-content {
+  opacity: 0;
+  transform: translateY(60px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  will-change: transform, opacity;
+}
+
+/* 深色模式：地图首屏改用深色纸感 */
+.dark-mode .hero-map {
+  background: linear-gradient(180deg, #1a1a18 0%, #141412 100%);
+}
+.dark-mode .hero-map::before {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+}
+.dark-mode .hero-map-title { color: #f0eee9; }
+.dark-mode .hero-map-sub { color: #8f8a80; }
+.dark-mode .hero-stat-num { color: #f0eee9; }
+.dark-mode .hero-stat-label { color: #8f8a80; }
+.dark-mode .hero-map-scroll-hint { color: #8f8a80; }
+.dark-mode .hero-map-arrow { border-color: #8f8a80; }
 
 @media (max-width: 640px) {
-  .travel-map-section {
-    padding: 22px 10px 8px;
+  .hero-map {
+    min-height: 560px;
+    padding-left: 12px;
+    padding-right: 12px;
   }
-
-  .travel-map-canvas {
-    height: 56vh;
-    min-height: 340px;
+  .hero-map-canvas {
+    min-height: 300px;
   }
-
-  .travel-map-title {
-    font-size: 1.3rem;
+  .hero-map-stats {
+    gap: 32px;
   }
 }

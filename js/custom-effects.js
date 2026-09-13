@@ -255,6 +255,11 @@
     style.id = 'terry-custom-css';
     style.textContent = `
       .music-player-pc { display: flex; align-items: center; margin: 0 4px; height: 100%; }
+
+      /* 较窄视口（≥ 800px 但仍不够宽）隐藏 PC 音乐播放器，给导航腾出空间 */
+      @media (min-width: 801px) and (max-width: 1100px) {
+        .music-player-pc { display: none !important; }
+      }
       .music-player-content {
         display: flex; align-items: center; gap: 8px;
         height: 30px; padding: 0 10px;
@@ -361,25 +366,47 @@
     if (!mainContent) return;
 
     // PJAX 回到首页时重建
-    const old = document.getElementById('travel-map-section');
-    if (old) old.remove();
+    const oldHero = document.getElementById('hero-map');
+    if (oldHero) oldHero.remove();
 
-    const section = document.createElement('section');
-    section.id = 'travel-map-section';
-    section.className = 'travel-map-section';
-    section.innerHTML = `
-      <div class="travel-map-head">
-        <h2 class="travel-map-title">足迹 · 中国</h2>
-        <p class="travel-map-sub">地图上的每一束光，都是一段旅程</p>
+    // 第 1 段：满屏地图首屏
+    const hero = document.createElement('section');
+    hero.id = 'hero-map';
+    hero.className = 'hero-map';
+    hero.innerHTML = `
+      <div class="hero-map-head">
+        <h1 class="hero-map-title">我的足迹</h1>
+        <p class="hero-map-sub">走过的每一座城市</p>
       </div>
-      <div id="travel-map" class="travel-map-canvas" aria-label="我去过的中国城市地图"></div>
-      <div class="travel-map-hint">悬停在光点上，看看当时的照片</div>
+      <div id="travel-map" class="hero-map-canvas" aria-label="我去过的中国城市地图"></div>
+      <div class="hero-map-stats"></div>
+      <button class="hero-map-scroll-hint" aria-label="向下滚动到博客">
+        <span>向下滑动，看我的博客</span>
+        <i class="hero-map-arrow"></i>
+      </button>
     `;
-    mainContent.insertBefore(section, mainContent.firstChild);
+
+    // 第 2 段：把原有内容（文章列表）包进一个容器，作为博客段落
+    const existing = mainContent.children;
+    const wrapper = document.createElement('div');
+    wrapper.id = 'blog-content';
+    wrapper.className = 'blog-content';
+    while (existing.length) {
+      wrapper.appendChild(existing[0]);
+    }
+
+    mainContent.appendChild(hero);
+    mainContent.appendChild(wrapper);
+
+    // 向下滚动引导：点击滚动到博客段落
+    const hint = hero.querySelector('.hero-map-scroll-hint');
+    hint.addEventListener('click', () => {
+      wrapper.scrollIntoView({ behavior: 'smooth' });
+    });
 
     loadScript('/js/vendor/echarts.min.js', 'echarts-vendor')
       .then(() => loadScript('/js/travel-map.js', 'travel-map-script'))
-      .catch(() => section.remove());
+      .catch(() => hero.remove());
   };
 
   // ========================================
