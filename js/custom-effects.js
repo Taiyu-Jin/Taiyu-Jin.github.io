@@ -366,24 +366,28 @@
     if (!mainContent) return;
 
     // PJAX 回到首页时重建
-    const oldHero = document.getElementById('hero-map');
+    const oldHero = document.getElementById('hero-earth');
     if (oldHero) oldHero.remove();
 
-    // 第 1 段：满屏地图首屏
+    // 第 1 段：满屏卫星视角首屏
     const hero = document.createElement('section');
-    hero.id = 'hero-map';
-    hero.className = 'hero-map';
+    hero.id = 'hero-earth';
+    hero.className = 'hero-earth';
     hero.innerHTML = `
-      <div class="hero-map-head">
-        <h1 class="hero-map-title">我的足迹</h1>
-        <p class="hero-map-sub">走过的每一座城市</p>
+      <div class="hero-earth-bg" role="img" aria-label="从太空俯瞰亚洲东部"></div>
+      <div class="hero-earth-vignette"></div>
+      <div class="hero-earth-overlay">
+        <div class="hero-earth-head">
+          <h1 class="hero-earth-title">我的足迹</h1>
+          <p class="hero-earth-sub">从太空俯瞰，这颗星球上我去过的地方</p>
+        </div>
+        <div class="hero-earth-dots" aria-label="我标注的城市"></div>
+        <div class="hero-earth-stats"></div>
+        <button class="hero-earth-scroll-hint" aria-label="向下滚动到博客">
+          <span>向下滑动，看我的博客</span>
+          <i class="hero-earth-arrow"></i>
+        </button>
       </div>
-      <div id="travel-map" class="hero-map-canvas" aria-label="我去过的中国城市地图"></div>
-      <div class="hero-map-stats"></div>
-      <button class="hero-map-scroll-hint" aria-label="向下滚动到博客">
-        <span>向下滑动，看我的博客</span>
-        <i class="hero-map-arrow"></i>
-      </button>
     `;
 
     // 第 2 段：把原有内容（文章列表）包进一个容器，作为博客段落
@@ -399,14 +403,12 @@
     mainContent.appendChild(wrapper);
 
     // 向下滚动引导：点击滚动到博客段落
-    const hint = hero.querySelector('.hero-map-scroll-hint');
+    const hint = hero.querySelector('.hero-earth-scroll-hint');
     hint.addEventListener('click', () => {
       wrapper.scrollIntoView({ behavior: 'smooth' });
     });
 
-    loadScript('/js/vendor/echarts.min.js', 'echarts-vendor')
-      .then(() => loadScript('/js/travel-map.js', 'travel-map-script'))
-      .catch(() => hero.remove());
+    loadScript('/js/travel-map.js', 'travel-map-script').catch(() => hero.remove());
   };
 
   // ========================================
