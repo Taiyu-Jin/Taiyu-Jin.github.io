@@ -559,7 +559,7 @@ code {
  *    风格：参考高德地图 3D 球体地球，黑色太空背景、可拖动旋转 / 滚轮缩放
  * ------------------------------------------------------------------------------------ */
 
-/* 第 1 段：满屏 3D 地球首屏 — 突破 .main-content 限宽撑满视口 */
+/* 第 1 段：满屏 Cesium 3D 地球首屏 — 突破 .main-content 限宽撑满视口 */
 .hero-earth {
   position: relative;
   width: 100vw;
@@ -570,71 +570,26 @@ code {
   margin-right: calc(50% - 50vw);
   margin-top: calc(-1 * var(--component-gap, 40px));
   margin-bottom: 0;
-  background: radial-gradient(120% 120% at 50% 40%, #0a1630 0%, #050b1a 45%, #01030a 100%); /* 太空深蓝渐变，替代纯黑 */
+  background: #000000; /* Cesium 自带太空背景，这里纯黑兜底 */
   transition: opacity 0.2s linear;
   will-change: transform, opacity;
 }
 
-/* 3D 地球 canvas 容器 */
+/* Cesium canvas 容器 */
 .hero-globe {
   position: absolute;
   inset: 0;
-  z-index: 1;
-}
-
-/* 星空层 1：密集小星点（多层 radial-gradient） */
-.hero-earth::after {
-  content: '';
-  position: absolute;
-  inset: 0;
   z-index: 0;
-  background-image:
-    radial-gradient(1px 1px at 6% 12%, rgba(255,255,255,0.9), transparent 60%),
-    radial-gradient(1px 1px at 14% 32%, rgba(255,255,255,0.6), transparent 60%),
-    radial-gradient(1.5px 1.5px at 22% 8%, rgba(255,255,255,0.8), transparent 60%),
-    radial-gradient(1px 1px at 28% 48%, rgba(255,255,255,0.55), transparent 60%),
-    radial-gradient(1px 1px at 35% 22%, rgba(255,255,255,0.7), transparent 60%),
-    radial-gradient(1.5px 1.5px at 42% 68%, rgba(255,255,255,0.75), transparent 60%),
-    radial-gradient(1px 1px at 48% 10%, rgba(255,255,255,0.5), transparent 60%),
-    radial-gradient(1px 1px at 55% 38%, rgba(255,255,255,0.65), transparent 60%),
-    radial-gradient(1.5px 1.5px at 60% 58%, rgba(255,255,255,0.8), transparent 60%),
-    radial-gradient(1px 1px at 66% 16%, rgba(255,255,255,0.5), transparent 60%),
-    radial-gradient(1px 1px at 72% 44%, rgba(255,255,255,0.6), transparent 60%),
-    radial-gradient(1.5px 1.5px at 78% 30%, rgba(255,255,255,0.7), transparent 60%),
-    radial-gradient(1px 1px at 82% 64%, rgba(255,255,255,0.5), transparent 60%),
-    radial-gradient(1px 1px at 88% 20%, rgba(255,255,255,0.65), transparent 60%),
-    radial-gradient(1.5px 1.5px at 92% 52%, rgba(255,255,255,0.75), transparent 60%),
-    radial-gradient(1px 1px at 96% 34%, rgba(255,255,255,0.5), transparent 60%),
-    radial-gradient(1px 1px at 10% 78%, rgba(255,255,255,0.55), transparent 60%),
-    radial-gradient(1px 1px at 20% 90%, rgba(255,255,255,0.6), transparent 60%),
-    radial-gradient(1.5px 1.5px at 32% 82%, rgba(255,255,255,0.7), transparent 60%),
-    radial-gradient(1px 1px at 46% 94%, rgba(255,255,255,0.5), transparent 60%),
-    radial-gradient(1px 1px at 58% 86%, rgba(255,255,255,0.6), transparent 60%),
-    radial-gradient(1.5px 1.5px at 70% 74%, rgba(255,255,255,0.7), transparent 60%),
-    radial-gradient(1px 1px at 84% 88%, rgba(255,255,255,0.55), transparent 60%),
-    radial-gradient(1px 1px at 94% 76%, rgba(255,255,255,0.6), transparent 60%);
-  pointer-events: none;
-  animation: star-twinkle 4s ease-in-out infinite alternate;
 }
 
-@keyframes star-twinkle {
-  0% { opacity: 0.75; }
-  100% { opacity: 1; }
+/* Cesium 默认会在容器内渲染 canvas 和 credit 等，隐藏默认版权条（保留可读性） */
+.hero-globe .cesium-viewer-bottom,
+.hero-globe .cesium-viewer-toolbar {
+  display: none !important;
 }
 
-/* 星空层 2：几颗较亮的星星（带十字光芒感） */
-.hero-earth::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background-image:
-    radial-gradient(2px 2px at 18% 15%, rgba(190, 220, 255, 0.9), transparent 70%),
-    radial-gradient(2px 2px at 76% 22%, rgba(255, 240, 200, 0.9), transparent 70%),
-    radial-gradient(2.5px 2.5px at 40% 74%, rgba(200, 225, 255, 0.85), transparent 70%),
-    radial-gradient(2px 2px at 88% 58%, rgba(255, 235, 190, 0.85), transparent 70%),
-    radial-gradient(2px 2px at 52% 46%, rgba(210, 230, 255, 0.8), transparent 70%);
-  pointer-events: none;
+.hero-globe .cesium-widget-credits {
+  display: none !important;
 }
 
 /* 浮在 3D 地球上方的 UI —— 只有一句梦想标题，定位在地球上方留白处 */
@@ -673,50 +628,6 @@ code {
   0% { opacity: 0.4; transform: translateY(4px); }
   50% { opacity: 1; transform: translateY(0); }
   100% { opacity: 0.4; transform: translateY(4px); }
-}
-
-/* -------------------------------------------------------------------------------------
- * 流星：缓慢划过天空的细长光带
- * ------------------------------------------------------------------------------------ */
-.hero-earth-shooting-stars {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.shooting-star {
-  position: absolute;
-  width: 2px;
-  height: 2px;
-  border-radius: 50%;
-  background: #ffffff;
-  opacity: 0;
-}
-
-/* 流星本体：一条从左上到右下的细长渐变光带 */
-.shooting-star::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 140px;
-  height: 1.5px;
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.9) 0%, rgba(160, 200, 255, 0.35) 60%, transparent 100%);
-  transform: translateX(-140px);
-}
-
-.star-1 { top: 12%; left: 70%; animation: shooting 9s linear 0s infinite; }
-.star-2 { top: 28%; left: 30%; animation: shooting 13s linear 4s infinite; }
-.star-3 { top: 6%;  left: 50%; animation: shooting 11s linear 8s infinite; }
-
-@keyframes shooting {
-  0%   { opacity: 0; transform: translate(0, 0) rotate(-35deg); }
-  3%   { opacity: 1; }
-  10%  { opacity: 1; transform: translate(-320px, 220px) rotate(-35deg); }
-  11%  { opacity: 0; }
-  100% { opacity: 0; transform: translate(-320px, 220px) rotate(-35deg); }
 }
 
 .hero-earth-sub {

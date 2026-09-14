@@ -361,6 +361,19 @@
       document.head.appendChild(s);
     });
 
+  const loadStyle = (href, id) =>
+    new Promise((resolve, reject) => {
+      const old = document.getElementById(id);
+      if (old) old.remove();
+      const l = document.createElement('link');
+      l.rel = 'stylesheet';
+      l.href = href;
+      l.id = id;
+      l.onload = resolve;
+      l.onerror = () => reject(new Error('加载失败: ' + href));
+      document.head.appendChild(l);
+    });
+
   const initTravelMap = () => {
     const mainContent = document.querySelector('.page-main-content.is-home .main-content');
     if (!mainContent) return;
@@ -369,7 +382,7 @@
     const oldHero = document.getElementById('hero-earth');
     if (oldHero) oldHero.remove();
 
-    // 第 1 段：满屏 3D 地球首屏
+    // 第 1 段：满屏 Cesium 3D 地球首屏
     const hero = document.createElement('section');
     hero.id = 'hero-earth';
     hero.className = 'hero-earth';
@@ -379,11 +392,6 @@
         <div class="hero-earth-head">
           <h1 class="hero-earth-title">我的梦想是环游世界</h1>
         </div>
-      </div>
-      <div class="hero-earth-shooting-stars" aria-hidden="true">
-        <span class="shooting-star star-1"></span>
-        <span class="shooting-star star-2"></span>
-        <span class="shooting-star star-3"></span>
       </div>
       <button class="hero-scroll-down" type="button" aria-label="进入博客">
         <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg>
@@ -432,41 +440,12 @@
       wrapper.classList.add('is-visible');
     }
 
-    // 加载链：ECharts → echarts-gl → travel-map
-    loadScript('/js/vendor/echarts.min.js', 'echarts-vendor')
-      .then(() => loadScript('/js/vendor/echarts-gl.min.js', 'echarts-gl-vendor'))
+    // 加载链：Cesium 主库 + 样式 → travel-map
+    // Cesium 需要设置 CESIUM_BASE_URL 指向本地静态资源目录
+    window.CESIUM_BASE_URL = '/js/vendor/cesium/';
+    loadStyle('/js/vendor/cesium/Widgets/widgets.css', 'cesium-widgets-css')
+      .then(() => loadScript('/js/vendor/cesium/Cesium.js', 'cesium-vendor'))
       .then(() => loadScript('/js/travel-map.js', 'travel-map-script'))
-      .then(() => {
-        // 鼠标视差：跟随鼠标位置让地球轻微旋转
-        const chart = window.echarts && window.echarts.getInstanceByDom(document.getElementById('hero-globe'));
-        if (!chart) return;
-        const baseAlpha = 30, baseBeta = 35; // 与 travel-map.js viewControl 一致
-        let raf = 0, targetAlpha = baseAlpha, targetBeta = baseBeta, currAlpha = baseAlpha, currBeta = baseBeta;
-
-        hero.addEventListener('mousemove', (e) => {
-          const r = hero.getBoundingClientRect();
-          const dx = (e.clientX - r.left) / r.width - 0.5;
-          const dy = (e.clientY - r.top) / r.height - 0.5;
-          targetAlpha = baseAlpha + dx * 8;
-          targetBeta = baseBeta - dy * 6;
-          if (!raf) raf = requestAnimationFrame(tick);
-        });
-        hero.addEventListener('mouseleave', () => {
-          targetAlpha = baseAlpha; targetBeta = baseBeta;
-          if (!raf) raf = requestAnimationFrame(tick);
-        });
-
-        const tick = () => {
-          currAlpha += (targetAlpha - currAlpha) * 0.08;
-          currBeta += (targetBeta - currBeta) * 0.08;
-          try { chart.setOption({ globe: { viewControl: { alpha: currAlpha, beta: currBeta } } }); } catch (e) {}
-          if (Math.abs(targetAlpha - currAlpha) > 0.05 || Math.abs(targetBeta - currBeta) > 0.05) {
-            raf = requestAnimationFrame(tick);
-          } else {
-            raf = 0;
-          }
-        };
-      })
       .catch((err) => {
         console.warn('[hero-earth] 加载失败：', err);
         hero.remove();
